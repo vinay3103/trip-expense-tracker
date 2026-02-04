@@ -1,17 +1,4 @@
-let members = JSON.parse(localStorage.getItem("members")) || ["Person 1"];
-let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-
-let paidBySelect = document.getElementById("paidBy");
-
-function loadMembers(){
-  paidBySelect.innerHTML="";
-  members.forEach(m=>{
-    let opt=document.createElement("option");
-    opt.textContent=m;
-    paidBySelect.appendChild(opt);
-  });
-}
-loadMembers();
+let expenses = [];
 
 async function addExpense(){
   let exp = {
@@ -28,12 +15,12 @@ async function addExpense(){
   });
 
   let result = await res.json();
-
   if(result.error){
-    alert("Error: " + result.error);
+    alert(result.error);
     return;
   }
 
+  desc.value=""; amount.value=""; paidBy.value=""; mode.value="";
   loadExpenses();
 }
 
@@ -42,7 +29,7 @@ async function loadExpenses(){
   let data = await res.json();
 
   if(!Array.isArray(data)){
-    console.error("Not array:", data);
+    console.error("Error:", data);
     return;
   }
 
@@ -52,7 +39,7 @@ async function loadExpenses(){
 
 function openPopup(){
   document.getElementById("popup").style.display="block";
-  renderTable();
+  loadExpenses();
 }
 
 function closePopup(){
@@ -62,17 +49,16 @@ function closePopup(){
 function renderTable(){
   let tbody=document.querySelector("#expenseTable tbody");
   tbody.innerHTML="";
-  expenses.forEach((e,i)=>{
+  expenses.forEach(e=>{
     tbody.innerHTML+=`
     <tr>
       <td>${e.date}</td>
-      <td>${e.amount.toFixed(2)}</td>
-      <td>${e.desc}</td>
-      <td>${e.paidBy}</td>
+      <td>${Number(e.amount).toFixed(2)}</td>
+      <td>${e.description}</td>
+      <td>${e.paidby}</td>
       <td>${e.mode}</td>
       <td>
-        <button class="edit-btn" onclick="editExpense(${i})">Edit</button>
-        <button class="delete-btn" onclick="deleteExpense(${i})">Delete</button>
+        <button class="delete-btn" onclick="deleteExpense('${e.id}')">Delete</button>
       </td>
     </tr>`;
   });
@@ -86,35 +72,15 @@ async function deleteExpense(id){
   loadExpenses();
 }
 
-
-function editExpense(i){
-  let e=expenses[i];
-  let amt=prompt("Amount",e.amount);
-  let desc=prompt("Description",e.desc);
-  let paid=prompt("Paid By",e.paidBy);
-  let mode=prompt("Mode",e.mode);
-
-  expenses[i]={
-    ...e,
-    amount:parseFloat(amt),
-    desc:desc,
-    paidBy:paid,
-    mode:mode
-  };
-
-  localStorage.setItem("expenses",JSON.stringify(expenses));
-  renderTable();
-}
-
 function downloadPDF(){
   const {jsPDF}=window.jspdf;
   let doc=new jsPDF();
 
   let rows=expenses.map(e=>[
     e.date,
-    e.amount.toFixed(2),
-    e.desc,
-    e.paidBy,
+    Number(e.amount).toFixed(2),
+    e.description,
+    e.paidby,
     e.mode
   ]);
 
@@ -126,5 +92,3 @@ function downloadPDF(){
 
   doc.save("trip-expenses.pdf");
 }
-
-
