@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Trip Expense Tracker</title>
 <link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -13,12 +12,11 @@
 
 <div class="container">
   <h1>Trip Expense Tracker</h1>
-  <h2>Add Expense</h2>
 
   <div class="form-group">
     <input id="desc" placeholder="Description">
     <input id="amount" type="number" placeholder="Amount">
-    <select id="paidBy"></select>
+    <input id="paidBy" placeholder="Paid By">
     <input id="mode" placeholder="Payment Mode">
 
     <button onclick="addExpense()">Add Expense</button>
