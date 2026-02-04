@@ -13,20 +13,29 @@ function loadMembers(){
 }
 loadMembers();
 
-function addExpense(){
-  let exp={
+async function addExpense(){
+  let exp = {
     date:new Date().toLocaleDateString(),
     amount:parseFloat(amount.value),
-    desc:desc.value,
-    paidBy:paidBy.value,
+    description:desc.value,
+    paidby:paidBy.value,
     mode:mode.value
   };
-  expenses.push(exp);
-  localStorage.setItem("expenses",JSON.stringify(expenses));
 
-  desc.value=""; amount.value=""; mode.value="";
+  await fetch("/.netlify/functions/saveExpense",{
+    method:"POST",
+    body:JSON.stringify(exp)
+  });
+
+  loadExpenses();
+}
+async function loadExpenses(){
+  let res = await fetch("/.netlify/functions/getExpenses");
+  expenses = await res.json();
+  renderTable();
 }
 
+loadExpenses();
 function openPopup(){
   document.getElementById("popup").style.display="block";
   renderTable();
@@ -55,13 +64,14 @@ function renderTable(){
   });
 }
 
-function deleteExpense(i){
-  if(confirm("Delete this expense?")){
-    expenses.splice(i,1);
-    localStorage.setItem("expenses",JSON.stringify(expenses));
-    renderTable();
-  }
+async function deleteExpense(id){
+  await fetch("/.netlify/functions/deleteExpense",{
+    method:"POST",
+    body:JSON.stringify({id})
+  });
+  loadExpenses();
 }
+
 
 function editExpense(i){
   let e=expenses[i];
