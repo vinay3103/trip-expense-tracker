@@ -15,20 +15,28 @@ loadMembers();
 
 async function addExpense(){
   let exp = {
-    date:new Date().toLocaleDateString(),
-    amount:parseFloat(amount.value),
-    description:desc.value,
-    paidby:paidBy.value,
-    mode:mode.value
+    date: new Date().toLocaleDateString(),
+    amount: parseFloat(amount.value),
+    description: desc.value,
+    paidby: paidBy.value,
+    mode: mode.value
   };
 
-  await fetch("/.netlify/functions/saveExpense",{
+  let res = await fetch("/.netlify/functions/saveExpense",{
     method:"POST",
-    body:JSON.stringify(exp)
+    body: JSON.stringify(exp)
   });
+
+  let result = await res.json();
+
+  if(result.error){
+    alert("Error: " + result.error);
+    return;
+  }
 
   loadExpenses();
 }
+
 async function loadExpenses(){
   let res = await fetch("/.netlify/functions/getExpenses");
   let data = await res.json();
@@ -118,4 +126,5 @@ function downloadPDF(){
 
   doc.save("trip-expenses.pdf");
 }
+
 
