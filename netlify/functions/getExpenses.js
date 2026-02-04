@@ -6,19 +6,7 @@ const supabase = createClient(
 );
 
 exports.handler = async function () {
-  const { data, error } = await supabase
-    .from("expenses")
-    .select("*");
-
-  if (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message })
-    };
-  }
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify(data)
-  };
+  const { data, error } = await supabase.from("expenses").select("*");
+  if (error) return { statusCode:500, body:JSON.stringify(error) };
+  return { statusCode:200, body:JSON.stringify(data) };
 };
