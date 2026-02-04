@@ -1,52 +1,30 @@
-let expenses = [];
-
 async function loadSummary(){
-  let res = await fetch("/.netlify/functions/getExpenses");
-  let data = await res.json();
+let members=await (await fetch("/.netlify/functions/getMembers")).json();
+let expenses=await (await fetch("/.netlify/functions/getExpenses")).json();
 
-  if(!Array.isArray(data)){
-    console.error(data);
-    return;
-  }
+let total=0, paid={};
+members.forEach(m=>paid[m.name]=0);
 
-  expenses = data;
+expenses.forEach(e=>{
+  total+=Number(e.amount);
+  paid[e.paidby]+=Number(e.amount);
+});
 
-  let paid = {};
-  expenses.forEach(e=>{
-    if(!paid[e.paidby]) paid[e.paidby]=0;
-    paid[e.paidby]+=Number(e.amount);
-  });
+let avg=total/members.length;
+let body=document.getElementById("summaryBody");
+body.innerHTML="";
 
-  let body=document.getElementById("summaryBody");
-  body.innerHTML="";
-
-  Object.keys(paid).forEach(name=>{
-    body.innerHTML+=`
-    <tr>
-      <td>${name}</td>
-      <td>${paid[name].toFixed(2)}</td>
-    </tr>`;
-  });
-
-  window.summaryData = paid;
+members.forEach(m=>{
+  let diff=paid[m.name]-avg;
+  body.innerHTML+=`
+  <tr>
+    <td>${m.name}</td>
+    <td>${paid[m.name].toFixed(2)}</td>
+    <td>${diff<0?
+      `<span class="red">➖ Owes ${Math.abs(diff).toFixed(2)}</span>`:
+      `<span class="green">➕ Gets ${diff.toFixed(2)}</span>`}
+    </td>
+  </tr>`;
+});
 }
-
-function downloadSummaryPDF(){
-  const {jsPDF}=window.jspdf;
-  let doc=new jsPDF();
-
-  let rows=[];
-  for(let name in summaryData){
-    rows.push([name, summaryData[name].toFixed(2)]);
-  }
-
-  doc.text("Trip Summary",14,10);
-  doc.autoTable({
-    head:[["Paid By","Total Paid"]],
-    body:rows
-  });
-
-  doc.save("trip-summary.pdf");
-}
-
 loadSummary();
