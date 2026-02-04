@@ -1,32 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Trip Summary</title>
+<title>Summary</title>
 <link rel="stylesheet" href="style.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
-
 <div class="container">
 <h1>Trip Summary</h1>
-
 <table>
-<thead>
-<tr>
-<th>Paid By</th>
-<th>Total Paid</th>
-</tr>
-</thead>
+<thead><tr><th>Name</th><th>Paid</th><th>Status</th></tr></thead>
 <tbody id="summaryBody"></tbody>
 </table>
-
-<br>
-<button onclick="downloadSummaryPDF()">Download PDF</button>
 <button onclick="location.href='index.html'">Back</button>
-
 </div>
-
 <script src="summary.js"></script>
 </body>
 </html>
