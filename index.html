@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Trip Expense Tracker</title>
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <h1>Trip Expense Tracker</h1>
+  <h2>Add Expense</h2>
+
+  <div class="form-group">
+    <input id="desc" placeholder="Description">
+    <input id="amount" type="number" placeholder="Amount">
+    <select id="paidBy"></select>
+    <input id="mode" placeholder="Payment Mode">
+
+    <button onclick="addExpense()">Add Expense</button>
+    <button onclick="openPopup()">View All Expenses</button>
+    <button onclick="location.href='summary.html'">View Summary</button>
+  </div>
+</div>
+
+<!-- POPUP -->
+<div id="popup" class="modal">
+  <div class="modal-content">
+    <span onclick="closePopup()" class="close">×</span>
+    <h2>All Expenses</h2>
+
+    <div class="table-wrapper">
+      <table id="expenseTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Description</th>
+            <th>Paid By</th>
+            <th>Mode</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <button onclick="downloadPDF()">Download PDF</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
