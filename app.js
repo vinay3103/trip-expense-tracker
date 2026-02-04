@@ -31,11 +31,17 @@ async function addExpense(){
 }
 async function loadExpenses(){
   let res = await fetch("/.netlify/functions/getExpenses");
-  expenses = await res.json();
+  let data = await res.json();
+
+  if(!Array.isArray(data)){
+    console.error("Not array:", data);
+    return;
+  }
+
+  expenses = data;
   renderTable();
 }
 
-loadExpenses();
 function openPopup(){
   document.getElementById("popup").style.display="block";
   renderTable();
@@ -112,3 +118,4 @@ function downloadPDF(){
 
   doc.save("trip-expenses.pdf");
 }
+
