@@ -1,17 +1,27 @@
-import { createClient } from '@supabase/supabase-js';
+const { createClient } = require("@supabase/supabase-js");
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_KEY
 );
 
-export async function handler(event) {
+exports.handler = async function (event) {
   const { id } = JSON.parse(event.body);
 
   const { error } = await supabase
-    .from('expenses')
+    .from("expenses")
     .delete()
-    .eq('id', id);
+    .eq("id", id);
 
-  return { statusCode:200, body:JSON.stringify({success:true}) };
-}
+  if (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message })
+    };
+  }
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ success: true })
+  };
+};
