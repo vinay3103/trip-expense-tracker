@@ -1,8 +1,8 @@
-// 🔴 PUT YOUR REAL SUPABASE DETAILS HERE
+
 const SUPABASE_URL = "https://hnvlnezbisyxmrubuarj.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhudmxuZXpiaXN5eG1ydWJ1YXJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMTExODAsImV4cCI6MjA4NTc4NzE4MH0.O7B21Nx762JCvx5caCJs3hiE4RO8GX2a9v3LP3Q9x58";
 
-// ✅ CREATE CLIENT ONCE WITH UNIQUE NAME
+
 const db = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_ANON_KEY
@@ -105,3 +105,4 @@ async function deleteExpense(id) {
   await db.from("expenses").delete().eq("id", id);
   openPopup();
 }
+
