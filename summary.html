@@ -3,23 +3,29 @@
 <head>
 <title>Trip Summary</title>
 <link rel="stylesheet" href="style.css">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 
 <div class="container">
 <h1>Trip Summary</h1>
-<table>
+
+<table id="summaryTable">
 <thead>
 <tr>
 <th>Name</th>
-<th>Total Paid</th>
+<th>Paid</th>
 <th>Status</th>
+<th>Settlement</th>
 </tr>
 </thead>
 <tbody id="summaryBody"></tbody>
 </table>
 
+<button onclick="downloadSummaryPDF()">Download PDF</button>
 <button onclick="location.href='index.html'">Back</button>
 </div>
 
