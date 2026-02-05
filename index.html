@@ -3,6 +3,9 @@
 <head>
 <title>Trip Expense Tracker</title>
 <link rel="stylesheet" href="style.css">
+
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -10,12 +13,14 @@
 
 <h1>Trip Expense Tracker</h1>
 
+<!-- MEMBER SETUP -->
 <div id="memberSection">
   <input type="number" id="count" placeholder="Number of people">
   <button onclick="generateInputs()">Next</button>
   <div id="nameInputs"></div>
 </div>
 
+<!-- EXPENSE SECTION -->
 <div id="expenseSection" class="hidden">
   <input id="desc" placeholder="Description">
   <input id="amount" type="number" placeholder="Amount">
@@ -29,17 +34,25 @@
 
 </div>
 
-<!-- Popup -->
+<!-- EXPENSE POPUP -->
 <div id="popup" class="modal">
-<div class="modal-content">
-<span onclick="closePopup()" class="close">×</span>
-<table id="expenseTable">
-<thead>
-<tr><th>Date</th><th>Amount</th><th>Description</th><th>Paid By</th><th>Mode</th><th>Action</th></tr>
-</thead>
-<tbody></tbody>
-</table>
-</div>
+  <div class="modal-content">
+    <span onclick="closePopup()" class="close">×</span>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Amount</th>
+          <th>Description</th>
+          <th>Paid By</th>
+          <th>Mode</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="expenseBody"></tbody>
+    </table>
+  </div>
 </div>
 
 <script src="app.js"></script>
