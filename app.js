@@ -3,97 +3,75 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let activeTripId = null;
+let expenses = [];
 
-/* =====================
-   LOAD OR CREATE TRIP
-===================== */
-async function initTrip() {
-  const { data } = await db
-    .from("trips")
-    .select("*")
-    .eq("is_active", true)
-    .order("created_at", { ascending: false })
-    .limit(1);
+/* ---------- INIT TRIP ---------- */
+async function initTrip(){
+  const { data } = await db.from("trips")
+    .select("*").eq("is_active", true)
+    .order("created_at",{ascending:false}).limit(1);
 
-  if (data.length === 0) {
-    // No active trip → ask members
-    document.getElementById("memberSection").classList.remove("hidden");
+  if(data.length===0){
+    memberSection.classList.remove("hidden");
   } else {
-    activeTripId = data[0].id;
-    document.getElementById("memberSection").classList.add("hidden");
-    document.getElementById("expenseSection").classList.remove("hidden");
+    activeTripId=data[0].id;
+    memberSection.classList.add("hidden");
+    expenseSection.classList.remove("hidden");
     loadMembers();
   }
 }
-
 initTrip();
 
-/* =====================
-   MEMBER SETUP
-===================== */
-function generateInputs() {
-  const n = count.value;
-  nameInputs.innerHTML = "";
-  for (let i = 0; i < n; i++) {
-    nameInputs.innerHTML += `<input id="m${i}" placeholder="Person ${i+1} name">`;
+/* ---------- MEMBERS ---------- */
+function generateInputs(){
+  nameInputs.innerHTML="";
+  for(let i=0;i<count.value;i++){
+    nameInputs.innerHTML+=`<input id="m${i}" placeholder="Person ${i+1} name">`;
   }
-  nameInputs.innerHTML += `<button onclick="startTrip(${n})">Start Trip</button>`;
+  nameInputs.innerHTML+=`<button onclick="startTrip(${count.value})">Start Trip</button>`;
 }
 
-async function startTrip(n) {
-  const { data: trip } = await db.from("trips").insert([{ is_active: true }]).select();
-  activeTripId = trip[0].id;
+async function startTrip(n){
+  const { data } = await db.from("trips").insert([{is_active:true}]).select();
+  activeTripId=data[0].id;
 
-  for (let i = 0; i < n; i++) {
+  for(let i=0;i<n;i++){
     await db.from("members").insert([
-      { trip_id: activeTripId, name: document.getElementById("m"+i).value }
+      {trip_id:activeTripId,name:document.getElementById("m"+i).value}
     ]);
   }
 
-  document.getElementById("memberSection").classList.add("hidden");
-  document.getElementById("expenseSection").classList.remove("hidden");
+  memberSection.classList.add("hidden");
+  expenseSection.classList.remove("hidden");
   loadMembers();
 }
 
-/* =====================
-   MEMBERS
-===================== */
-async function loadMembers() {
-  const { data } = await db
-    .from("members")
-    .select("*")
-    .eq("trip_id", activeTripId);
-
-  paidBy.innerHTML = "";
-  data.forEach(m => paidBy.innerHTML += `<option>${m.name}</option>`);
+async function loadMembers(){
+  const { data } = await db.from("members").select("*").eq("trip_id",activeTripId);
+  paidBy.innerHTML="";
+  data.forEach(m=>paidBy.innerHTML+=`<option>${m.name}</option>`);
 }
 
-/* =====================
-   EXPENSES
-===================== */
-async function addExpense() {
+/* ---------- EXPENSES ---------- */
+async function addExpense(){
   await db.from("expenses").insert([{
-    trip_id: activeTripId,
-    date: new Date().toLocaleString(),
-    amount: parseFloat(amount.value),
-    description: desc.value,
-    paidby: paidBy.value,
-    mode: mode.value
+    trip_id:activeTripId,
+    date:new Date().toLocaleString(),
+    amount:parseFloat(amount.value),
+    description:desc.value,
+    paidby:paidBy.value,
+    mode:mode.value
   }]);
-
-  desc.value = amount.value = mode.value = "";
+  desc.value=amount.value=mode.value="";
 }
 
-async function openPopup() {
-  popup.style.display = "block";
-  const { data } = await db
-    .from("expenses")
-    .select("*")
-    .eq("trip_id", activeTripId);
-
-  expenseBody.innerHTML = "";
-  data.forEach(e => {
-    expenseBody.innerHTML += `
+async function openPopup(){
+  popup.style.display="block";
+  const { data } = await db.from("expenses").select("*").eq("trip_id",activeTripId);
+  expenses=data;
+  expenseBody.innerHTML="";
+  expenses.forEach(e=>{
+    expenseBody.innerHTML+=`
     <tr>
       <td>${e.date}</td>
       <td>${e.amount}</td>
@@ -101,7 +79,6 @@ async function openPopup() {
       <td>${e.paidby}</td>
       <td>${e.mode}</td>
       <td>
-        <button onclick="editExpense('${e.id}')">Edit</button>
         <button onclick="deleteExpense('${e.id}')">Delete</button>
       </td>
     </tr>`;
@@ -115,11 +92,20 @@ async function deleteExpense(id){
   openPopup();
 }
 
-async function editExpense(id){
-  const newAmount = prompt("New Amount:");
-  const newDesc = prompt("New Description:");
-  await db.from("expenses")
-    .update({ amount:newAmount, description:newDesc })
-    .eq("id",id);
-  openPopup();
+/* ---------- PDF ---------- */
+function downloadExpensesPDF(){
+  const { jsPDF } = window.jspdf;
+  let doc = new jsPDF();
+
+  let rows = expenses.map(e=>[
+    e.date,e.amount,e.description,e.paidby,e.mode
+  ]);
+
+  doc.text("Trip Expenses",14,10);
+  doc.autoTable({
+    head:[["Date","Amount","Description","Paid By","Mode"]],
+    body:rows
+  });
+
+  doc.save("trip-expenses.pdf");
 }
