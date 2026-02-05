@@ -97,8 +97,6 @@ function downloadSummaryPDF(){
 }
 
 loadSummary();
-oc.save("trip-summary.pdf");
-}
 
-loadSummary();
+
 
