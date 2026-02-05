@@ -97,6 +97,3 @@ function downloadSummaryPDF(){
 }
 
 loadSummary();
-
-
-
