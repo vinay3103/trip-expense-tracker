@@ -3,22 +3,24 @@
 <head>
 <title>Trip Expense Tracker</title>
 <link rel="stylesheet" href="style.css">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 
 <div class="container">
-
 <h1>Trip Expense Tracker</h1>
 
-<!-- MEMBER SETUP -->
 <div id="memberSection">
   <input type="number" id="count" placeholder="Number of people">
   <button onclick="generateInputs()">Next</button>
   <div id="nameInputs"></div>
 </div>
 
-<!-- EXPENSE SECTION -->
 <div id="expenseSection" class="hidden">
   <input id="desc" placeholder="Description">
   <input id="amount" type="number" placeholder="Amount">
@@ -29,14 +31,14 @@
   <button onclick="openPopup()">View Expenses</button>
   <button onclick="location.href='summary.html'">View Summary</button>
 </div>
-
 </div>
 
 <!-- POPUP -->
 <div id="popup" class="modal">
 <div class="modal-content">
 <span onclick="closePopup()" class="close">×</span>
-<table>
+
+<table id="expenseTable">
 <thead>
 <tr>
 <th>Date</th><th>Amount</th><th>Description</th>
@@ -45,6 +47,8 @@
 </thead>
 <tbody id="expenseBody"></tbody>
 </table>
+
+<button onclick="downloadExpensesPDF()">Download PDF</button>
 </div>
 </div>
 
