@@ -13,16 +13,25 @@
 <div class="container">
 <h1>Trip Summary</h1>
 
+<h3>Balances</h3>
 <table id="summaryTable">
 <thead>
 <tr>
 <th>Name</th>
 <th>Paid</th>
-<th>Status</th>
+<th>Balance</th>
 <th>Settlement</th>
 </tr>
 </thead>
 <tbody id="summaryBody"></tbody>
+</table>
+
+<h3>Who Pays Whom</h3>
+<table>
+<thead>
+<tr><th>From</th><th>To</th><th>Amount</th></tr>
+</thead>
+<tbody id="settlementBody"></tbody>
 </table>
 
 <button onclick="downloadSummaryPDF()">Download PDF</button>
