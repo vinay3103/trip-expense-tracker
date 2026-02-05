@@ -1,50 +1,64 @@
-// 🔴 REPLACE WITH YOUR SUPABASE DETAILS
+// 🔴 PUT YOUR REAL SUPABASE DETAILS HERE
 const SUPABASE_URL = "https://hnvlnezbisyxmrubuarj.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhudmxuZXpiaXN5eG1ydWJ1YXJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMTExODAsImV4cCI6MjA4NTc4NzE4MH0.O7B21Nx762JCvx5caCJs3hiE4RO8GX2a9v3LP3Q9x58";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhudmxuZXpiaXN5eG1ydWJ1YXJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMTExODAsImV4cCI6MjA4NTc4NzE4MH0.O7B21Nx762JCvx5caCJs3hiE4RO8GX2a9v3LP3Q9x58";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// ✅ CREATE CLIENT ONCE WITH UNIQUE NAME
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
 
 let members = [];
 let expenses = [];
 
-// STEP 1: MEMBER INPUTS
+/* ======================
+   MEMBER SETUP
+====================== */
+
 function generateInputs() {
-  let n = document.getElementById("count").value;
-  let div = document.getElementById("nameInputs");
+  const n = document.getElementById("count").value;
+  const div = document.getElementById("nameInputs");
   div.innerHTML = "";
 
   for (let i = 0; i < n; i++) {
-    div.innerHTML += `<input id="m${i}" placeholder="Person ${i+1} name">`;
+    div.innerHTML += `<input id="m${i}" placeholder="Person ${i + 1} name">`;
   }
+
   div.innerHTML += `<button onclick="saveMembers(${n})">Start Trip</button>`;
 }
 
-// SAVE MEMBERS
 async function saveMembers(n) {
   for (let i = 0; i < n; i++) {
-    let name = document.getElementById("m" + i).value;
-    await supabase.from("members").insert([{ name }]);
+    const name = document.getElementById(`m${i}`).value;
+    if (!name) continue;
+    await db.from("members").insert([{ name }]);
   }
 
-  loadMembers();
+  await loadMembers();
+
   document.getElementById("memberSection").classList.add("hidden");
   document.getElementById("expenseSection").classList.remove("hidden");
 }
 
-// LOAD MEMBERS INTO DROPDOWN
 async function loadMembers() {
-  let { data } = await supabase.from("members").select("*");
+  const { data } = await db.from("members").select("*");
   members = data || [];
 
-  let sel = document.getElementById("paidBy");
+  const sel = document.getElementById("paidBy");
   sel.innerHTML = "";
-  members.forEach(m => sel.innerHTML += `<option>${m.name}</option>`);
+  members.forEach(m => {
+    sel.innerHTML += `<option value="${m.name}">${m.name}</option>`;
+  });
 }
+
 loadMembers();
 
-// ADD EXPENSE
+/* ======================
+   EXPENSES
+====================== */
+
 async function addExpense() {
-  let exp = {
+  const exp = {
     date: new Date().toLocaleDateString(),
     amount: parseFloat(amount.value),
     description: desc.value,
@@ -52,29 +66,34 @@ async function addExpense() {
     mode: mode.value
   };
 
-  await supabase.from("expenses").insert([exp]);
-  desc.value = amount.value = mode.value = "";
+  await db.from("expenses").insert([exp]);
+
+  desc.value = "";
+  amount.value = "";
+  mode.value = "";
 }
 
-// VIEW EXPENSES
 async function openPopup() {
   popup.style.display = "block";
-  let { data } = await supabase.from("expenses").select("*");
+
+  const { data } = await db.from("expenses").select("*");
   expenses = data || [];
 
-  let body = document.getElementById("expenseBody");
+  const body = document.getElementById("expenseBody");
   body.innerHTML = "";
 
   expenses.forEach(e => {
     body.innerHTML += `
-    <tr>
-      <td>${e.date}</td>
-      <td>${e.amount}</td>
-      <td>${e.description}</td>
-      <td>${e.paidby}</td>
-      <td>${e.mode}</td>
-      <td><button onclick="deleteExpense('${e.id}')">Delete</button></td>
-    </tr>`;
+      <tr>
+        <td>${e.date}</td>
+        <td>${e.amount}</td>
+        <td>${e.description}</td>
+        <td>${e.paidby}</td>
+        <td>${e.mode}</td>
+        <td>
+          <button onclick="deleteExpense('${e.id}')">Delete</button>
+        </td>
+      </tr>`;
   });
 }
 
@@ -83,6 +102,6 @@ function closePopup() {
 }
 
 async function deleteExpense(id) {
-  await supabase.from("expenses").delete().eq("id", id);
+  await db.from("expenses").delete().eq("id", id);
   openPopup();
 }
