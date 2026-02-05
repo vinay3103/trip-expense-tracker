@@ -5,10 +5,9 @@ const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let activeTripId = null;
 let expenses = [];
 
-/* ---------- INIT TRIP ---------- */
 async function initTrip(){
   const { data } = await db.from("trips")
-    .select("*").eq("is_active", true)
+    .select("*").eq("is_active",true)
     .order("created_at",{ascending:false}).limit(1);
 
   if(data.length===0){
@@ -22,7 +21,6 @@ async function initTrip(){
 }
 initTrip();
 
-/* ---------- MEMBERS ---------- */
 function generateInputs(){
   nameInputs.innerHTML="";
   for(let i=0;i<count.value;i++){
@@ -47,12 +45,12 @@ async function startTrip(n){
 }
 
 async function loadMembers(){
-  const { data } = await db.from("members").select("*").eq("trip_id",activeTripId);
+  const { data } = await db.from("members")
+    .select("*").eq("trip_id",activeTripId);
   paidBy.innerHTML="";
   data.forEach(m=>paidBy.innerHTML+=`<option>${m.name}</option>`);
 }
 
-/* ---------- EXPENSES ---------- */
 async function addExpense(){
   await db.from("expenses").insert([{
     trip_id:activeTripId,
@@ -67,7 +65,8 @@ async function addExpense(){
 
 async function openPopup(){
   popup.style.display="block";
-  const { data } = await db.from("expenses").select("*").eq("trip_id",activeTripId);
+  const { data } = await db.from("expenses")
+    .select("*").eq("trip_id",activeTripId);
   expenses=data;
   expenseBody.innerHTML="";
   expenses.forEach(e=>{
@@ -78,34 +77,25 @@ async function openPopup(){
       <td>${e.description}</td>
       <td>${e.paidby}</td>
       <td>${e.mode}</td>
-      <td>
-        <button onclick="deleteExpense('${e.id}')">Delete</button>
-      </td>
+      <td><button onclick="deleteExpense('${e.id}')">Delete</button></td>
     </tr>`;
   });
 }
 
-function closePopup(){ popup.style.display="none"; }
+function closePopup(){popup.style.display="none";}
 
 async function deleteExpense(id){
   await db.from("expenses").delete().eq("id",id);
   openPopup();
 }
 
-/* ---------- PDF ---------- */
 function downloadExpensesPDF(){
-  const { jsPDF } = window.jspdf;
-  let doc = new jsPDF();
-
-  let rows = expenses.map(e=>[
-    e.date,e.amount,e.description,e.paidby,e.mode
-  ]);
-
-  doc.text("Trip Expenses",14,10);
+  const {jsPDF}=window.jspdf;
+  let doc=new jsPDF();
   doc.autoTable({
     head:[["Date","Amount","Description","Paid By","Mode"]],
-    body:rows
+    body:expenses.map(e=>[e.date,e.amount,e.description,e.paidby,e.mode])
   });
-
   doc.save("trip-expenses.pdf");
 }
+
