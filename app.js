@@ -98,4 +98,3 @@ function downloadExpensesPDF(){
   });
   doc.save("trip-expenses.pdf");
 }
-
