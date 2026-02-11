@@ -98,3 +98,20 @@ function downloadExpensesPDF(){
   });
   doc.save("trip-expenses.pdf");
 }
+/* ---------- END TRIP ---------- */
+async function endTrip(){
+  if(!confirm("Are you sure you want to end this trip?")) return;
+
+  await db.from("trips")
+    .update({is_active:false})
+    .eq("id",activeTripId);
+
+  activeTripId = null;
+
+  // Reset UI
+  memberSection.classList.remove("hidden");
+  expenseSection.classList.add("hidden");
+  nameInputs.innerHTML = "";
+  count.value = "";
+}
+
