@@ -4,55 +4,25 @@
 <title>Trip Summary</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script src="summary.js" defer></script>
 </head>
 <body>
 
 <div class="container">
 <h1>Trip Summary</h1>
 
-<h3>Balances</h3>
 <table>
 <thead>
 <tr>
 <th>Name</th>
-<th>Paid</th>
 <th>Balance</th>
 </tr>
 </thead>
 <tbody id="summaryBody"></tbody>
 </table>
 
-<h3>Who Pays Whom</h3>
-<table>
-<thead>
-<tr><th>From</th><th>To</th><th>Amount</th></tr>
-</thead>
-<tbody id="settlementBody"></tbody>
-</table>
-
-<h3>Record Payment</h3>
-<select id="fromUser"></select>
-<select id="toUser"></select>
-<input id="payAmount" type="number" placeholder="Amount">
-<button onclick="recordPayment()">Record Payment</button>
-
-<h3>Payment History</h3>
-<table>
-<thead>
-<tr><th>Date</th><th>From</th><th>To</th><th>Amount</th></tr>
-</thead>
-<tbody id="paymentBody"></tbody>
-</table>
-
-<button onclick="startNewTrip()">Start New Trip</button>
-<button onclick="downloadSummaryPDF()">Download PDF</button>
 <button onclick="location.href='index.html'">Back</button>
-
 </div>
 
-<script src="summary.js"></script>
 </body>
 </html>
-
