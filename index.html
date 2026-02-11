@@ -6,17 +6,19 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script src="app.js" defer></script>
 </head>
 <body>
 
 <div class="container">
 <h1>Trip Expense Tracker</h1>
 
-<div id="memberSection">
-  <input id="count" type="number" placeholder="Number of people">
-  <button onclick="generateInputs()">Next</button>
-  <div id="nameInputs"></div>
+<button onclick="logout()">Logout</button>
+
+<div id="tripSection">
+  <button onclick="createTrip()">Create New Trip</button>
+  <input id="joinCode" placeholder="Trip ID">
+  <button onclick="joinTrip()">Join Trip</button>
 </div>
 
 <div id="expenseSection" class="hidden">
@@ -26,30 +28,9 @@
   <input id="mode" placeholder="Payment Mode">
 
   <button onclick="addExpense()">Add Expense</button>
-  <button onclick="openPopup()">View Expenses</button>
-  <button onclick="location.href='summary.html'">View Summary</button>
-  <button onclick="endTrip()">End Trip</button>
-
+  <button onclick="goSummary()">View Summary</button>
 </div>
 </div>
 
-<div id="popup" class="modal">
-<div class="modal-content">
-<span onclick="closePopup()" class="close">×</span>
-<table>
-<thead>
-<tr>
-<th>Date</th><th>Amount</th><th>Description</th>
-<th>Paid By</th><th>Mode</th><th>Action</th>
-</tr>
-</thead>
-<tbody id="expenseBody"></tbody>
-</table>
-<button onclick="downloadExpensesPDF()">Download PDF</button>
-</div>
-</div>
-
-<script src="app.js"></script>
 </body>
 </html>
-
