@@ -116,8 +116,44 @@ function loadPaymentHistory(payments){
       <td>${p.from_user}</td>
       <td>${p.to_user}</td>
       <td>${p.amount}</td>
+      <td>
+        <button onclick="editPayment('${p.id}','${p.amount}')">Edit</button>
+        <button onclick="deletePayment('${p.id}')">Delete</button>
+      </td>
     </tr>`;
   });
+}
+async function editPayment(id,currentAmount){
+  let newAmount = prompt("Enter new amount", currentAmount);
+  if(!newAmount) return;
+
+  await db.from("payments")
+    .update({amount:parseFloat(newAmount)})
+    .eq("id",id);
+
+  loadSummary();
+}
+async function deletePayment(id){
+  if(!confirm("Delete this payment?")) return;
+
+  await db.from("payments")
+    .delete()
+    .eq("id",id);
+
+  loadSummary();
+}
+async function startNewTrip(){
+  const { data: trip } = await db.from("trips")
+    .select("*").eq("is_active",true)
+    .order("created_at",{ascending:false}).limit(1);
+
+  if(trip.length>0){
+    await db.from("trips")
+      .update({is_active:false})
+      .eq("id",trip[0].id);
+  }
+
+  window.location.href="index.html";
 }
 
 function populatePaymentSelectors(members){
@@ -138,3 +174,4 @@ function downloadSummaryPDF(){
 }
 
 loadSummary();
+
