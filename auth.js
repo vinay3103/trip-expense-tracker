@@ -7,9 +7,8 @@ async function login(){
     email: email.value,
     password: password.value
   });
-
   if(error) alert(error.message);
-  else window.location.href="index.html";
+  else window.location.href="dashboard.html";
 }
 
 async function signup(){
@@ -17,7 +16,7 @@ async function signup(){
     email: email.value,
     password: password.value
   });
-
   if(error) alert(error.message);
-  else alert("Check email to confirm account.");
+  else alert("Check email for confirmation.");
 }
+
