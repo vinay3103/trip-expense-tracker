@@ -31,20 +31,35 @@ async function logout(){
 
 /* ---------- CREATE TRIP ---------- */
 async function createTrip(){
-  const { data } = await db
+  const { data, error } = await db
     .from("trips")
     .insert([{ owner: user.id }])
-    .select();
+    .select()
+    .single();
 
-  tripId = data[0].id;
+  if(error){
+    alert("Trip creation failed: " + error.message);
+    console.error(error);
+    return;
+  }
 
-  await db.from("members").insert([
-    { trip_id: tripId, user_id: user.id, name: user.email }
-  ]);
+  tripId = data.id;
 
-  localStorage.setItem("tripId",tripId);
+  const { error: memberError } = await db
+    .from("members")
+    .insert([
+      { trip_id: tripId, user_id: user.id, name: user.email }
+    ]);
+
+  if(memberError){
+    alert("Member creation failed: " + memberError.message);
+    console.error(memberError);
+    return;
+  }
+
+  localStorage.setItem("tripId", tripId);
+
   alert("Trip created. Share this Trip ID:\n" + tripId);
-
   location.reload();
 }
 
@@ -91,3 +106,4 @@ async function addExpense(){
 function goSummary(){
   window.location.href="summary.html";
 }
+
